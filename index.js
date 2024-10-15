@@ -31,19 +31,16 @@ app.get("/", (req, res) => {
 });
 
 // Insert a new task into the database
-app.post("/api/tasks", async (req, res) => {
-  const { task_title, task_description, image, status, reminder } = req.body;
+app.post("/api/todo", async (req, res) => {
+  const { todoTitle,todoDescription } = req.body;
 
-  // Ensure all fields are provided
-  if (!task_title || !task_description || !image || !status || reminder) {
-    return res.status(400).json({ error: "All fields are required" });
-  }
+
 
   const query = `
-    INSERT INTO consumertasks (task_title, task_description, image, status,reminder)
-    VALUES ($1, $2, $3, $4,$5) RETURNING *
+    INSERT INTO todo (todoTitle,todoDescription)
+    VALUES ($1, $2) RETURNING *
   `;
-  const values = [task_title, task_description, image, status, reminder];
+  const values = [todoTitle,todoDescription];
 
   try {
     const result = await pool.query(query, values);
@@ -57,8 +54,8 @@ app.post("/api/tasks", async (req, res) => {
 });
 
 // Get all tasks
-app.get("/api/tasks", async (req, res) => {
-  const query = "SELECT * FROM consumertasks";
+app.get("/api/todo", async (req, res) => {
+  const query = "SELECT * FROM todo";
 
   try {
     const result = await pool.query(query);
