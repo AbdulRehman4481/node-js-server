@@ -37,7 +37,7 @@ app.post("/api/todo", async (req, res) => {
 
 
   const query = `
-    INSERT INTO todo (todo_title,todo_description)
+    INSERT INTO todo_items (todo_title,todo_description)
     VALUES ($1, $2) RETURNING *
   `;
   const values = [todo_title,todo_description];
@@ -55,7 +55,7 @@ app.post("/api/todo", async (req, res) => {
 
 // Get all tasks
 app.get("/api/todo", async (req, res) => {
-  const query = "SELECT * FROM todo";
+  const query = "SELECT * FROM todo_items";
 
   try {
     const result = await pool.query(query);
