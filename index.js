@@ -89,6 +89,51 @@ app.get("/api/tasks/:id", async (req, res) => {
   }
 });
 
+app.delete("/api/todo/:id", async (req, res) => {
+  const { id } = req.params;
+
+  const query = "DELETE FROM todo_items WHERE id = $1 RETURNING *";
+  const values = [id];
+
+  try {
+    const result = await pool.query(query, values);
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: "Task not found" });
+    }
+    res.json({ message: "Task deleted successfully", task: result.rows[0] });
+  } catch (err) {
+    console.error("Database delete error:", err.stack);
+    res
+      .status(500)
+      .json({ error: "Database delete error", details: err.message });
+  }
+});
+
+app.put("/api/todo/:id", async (req, res) => {
+  const { id } = req.params;
+  const { todo_title, todo_description } = req.body;
+
+  const query = `
+    UPDATE todo_items 
+    SET todo_title = $1, todo_description = $2 
+    WHERE id = $3 
+    RETURNING *`;
+  const values = [todo_title, todo_description, id];
+
+  try {
+    const result = await pool.query(query, values);
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: "Task not found" });
+    }
+    res.json(result.rows[0]); // Return updated task
+  } catch (err) {
+    console.error("Database update error:", err.stack);
+    res
+      .status(500)
+      .json({ error: "Database update error", details: err.message });
+  }
+});
+
 // Start the server
 const PORT = process.env.PORT || 8000;
 app.listen(PORT, () => {
