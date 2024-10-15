@@ -32,15 +32,15 @@ app.get("/", (req, res) => {
 
 // Insert a new task into the database
 app.post("/api/todo", async (req, res) => {
-  const { todoTitle,todoDescription } = req.body;
+  const { todo_title,todo_description } = req.body;
 
 
 
   const query = `
-    INSERT INTO todo (todoTitle,todoDescription)
+    INSERT INTO todo (todo_title,todo_description)
     VALUES ($1, $2) RETURNING *
   `;
-  const values = [todoTitle,todoDescription];
+  const values = [todo_title,todo_description];
 
   try {
     const result = await pool.query(query, values);
